@@ -1,0 +1,140 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+  <xi:include href="layout.html" />
+  <xi:include href="macros.html" />
+  <head>
+   <title>ニコニコカレンダー Plugin</title>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+   <script src="${href.chrome('nn/js/prototype.js')}" type="text/javascript"></script>
+   <script src="${href.chrome('nn/js/tooltip-v0.1.js')}" type="text/javascript"></script>
+  </head>
+  <py:for each="user, comment_days in comment_data.iteritems()">
+    <py:for each="day in comment_days">
+      <div class="tooltip" id="tooltip_${user}_${day}" style="display: none;">
+        ${comment_data[user][day]}
+      </div>
+   </py:for>
+  </py:for>
+<body>
+
+<form action="nikoniko" method="get">
+<div id="content" class="nikoniko">
+
+<h1>やる夫カレンダー</h1>
+<div id="personal" py:if ="can_change">
+  <div id="yourMood">
+    <h2>あなたの気分</h2>
+      <div id="moodText">
+        ようこそ ${username}さん,今日の調子はどうです?
+      </div>
+      <ul id="moodList">
+        <py:choose test="todays_mood">
+          <py:when test="'worstMood'">
+            <li id="active"><a href="?worstMood"><img src="${href.chrome('nn/images/worstMood.png')}" alt="Worst" title="最悪･･･"/></a></li>
+          </py:when>
+          <py:otherwise>
+            <li><a href="?worstMood"><img src="${href.chrome('nn/images/worstMood.png')}" alt="Worst" title="最悪･･･"/></a></li>
+          </py:otherwise>
+        </py:choose>
+
+        <py:choose test="todays_mood">
+          <py:when test="'badMood'">
+            <li id="active"><a href="?badMood"><img src="${href.chrome('nn/images/badMood.png')}" alt="Bad" title="よくない"/></a></li>
+          </py:when>
+          <py:otherwise>
+            <li><a href="?badMood"><img src="${href.chrome('nn/images/badMood.png')}" alt="Bad" title="よくない"/></a></li>
+          </py:otherwise>
+        </py:choose>
+
+        <py:choose test="todays_mood">
+          <py:when test="'okMood'">
+            <li id="active"><a href="?okMood"><img src="${href.chrome('nn/images/okMood.png')}" alt="Ok" title="まぁまぁ"/></a></li>
+          </py:when>
+          <py:otherwise>
+            <li><a href="?okMood"><img src="${href.chrome('nn/images/okMood.png')}" alt="Ok" title="まぁまぁ"/></a></li>
+          </py:otherwise>
+        </py:choose>
+        
+        <py:choose test="todays_mood">
+          <py:when test="'goodMood'">
+            <li id="active"><a href="?goodMood"><img src="${href.chrome('nn/images/goodMood.png')}" alt="Good" title="いいかんじ"/></a></li>
+          </py:when>
+          <py:otherwise>
+            <li ><a href="?goodMood"><img src="${href.chrome('nn/images/goodMood.png')}" alt="Good" title="いいかんじ"/></a></li>
+          </py:otherwise>
+        </py:choose>
+
+        <py:choose test="todays_mood">
+          <py:when test="'bestMood'">
+            <li id="active"><a href="?bestMood"><img src="${href.chrome('nn/images/bestMood.png')}" alt="Best" title="最高！"/></a></li>
+          </py:when>
+          <py:otherwise>
+            <li ><a href="?bestMood"><img src="${href.chrome('nn/images/bestMood.png')}" alt="Best" title="最高！"/></a></li>
+          </py:otherwise>
+        </py:choose>
+      </ul>
+  </div>
+  <BR/>
+  <div id="yourComment">
+    <h2>コメント</h2>
+    <div id="commentText">
+      なにか理由があるならどうぞ。
+    </div>
+    <textarea name="comment" rows="3" columns="25">${comment}</textarea>
+    <div id="commentButtons">
+      <input type="submit" value="Submit"/>
+    </div>
+  </div>
+</div>
+
+
+<div id="teamMood">
+  <h2>チームの雰囲気</h2>   
+  <div id="calendarText">
+    Week Starting <a href="?date=${last_week}">&lt;&lt;</a>&nbsp;${start_of_week}&nbsp;<a href="?date=${next_week}">&gt;&gt;</a>
+  </div>
+  <table border="0" cellpadding="0" cellspacing="0">
+    <thead>
+      <tr>
+        <td class="username">&nbsp;</td>
+        <py:for each="day in days">
+          <td>${day}</td>
+        </py:for>
+      </tr>
+    </thead>
+    <tbody>
+      <py:for each="user in users">
+        <tr>
+          <td class="username">
+            ${user}
+          </td>
+          <py:for each="day in days">
+            <td id="day_${user}_${day}">
+                <py:if test="mood_data[user]">
+                  <py:if test="mood_data[user][day]">
+                    <img py:if = "mood_data[user][day] == 'worstMood'" src="${href.chrome('nn/images/worstMood.png')}" alt="最悪･･･"/>
+                    <img py:if = "mood_data[user][day] == 'badMood'" src="${href.chrome('nn/images/badMood.png')}" alt="よくない"/>
+                    <img py:if = "mood_data[user][day] == 'okMood'" src="${href.chrome('nn/images/okMood.png')}" alt="まぁまぁ"/>
+                    <img py:if = "mood_data[user][day] == 'goodMood'" src="${href.chrome('nn/images/goodMood.png')}" alt="いいかんじ"/>
+                    <img py:if = "mood_data[user][day] == 'bestMood'" src="${href.chrome('nn/images/bestMood.png')}" alt="最高！"/>
+                    <a href="#">コメント<span class="setumei">${comment_data[user][day]}</span></a>
+                  </py:if>
+                </py:if>
+            </td>
+          </py:for>
+        </tr>
+      </py:for>
+    </tbody>
+  </table>
+</div>
+
+</div>
+</form>
+
+
+</body>
+</html>
